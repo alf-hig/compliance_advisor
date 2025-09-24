@@ -1,0 +1,40 @@
+databases:
+  - name: compliance-advisor-db
+    databaseName: compliance_advisor_production
+    user: compliance_advisor_user
+    plan: free
+
+services:
+  - type: web
+    name: compliance-advisor
+    runtime: ruby
+    plan: free
+    buildCommand: "./bin/render-build.sh"
+    startCommand: "bundle exec puma -C config/puma.rb"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: compliance-advisor-db
+          property: connectionString
+      - key: RAILS_MASTER_KEY
+        sync: false
+      - key: WEB_CONCURRENCY
+        value: 2
+      - key: RAILS_ENV
+        value: production
+      - key: BUNDLE_WITHOUT
+        value: development:test
+      - key: RAILS_LOG_TO_STDOUT
+        value: enabled
+      - key: RAILS_SERVE_STATIC_FILES
+        value: enabled
+    healthCheckPath: "/up"
+    domains:
+      - compliance-advisor.onrender.com
+    scaling:
+      minInstances: 1
+      maxInstances: 1
+    disk:
+      name: compliance-advisor-disk
+      mountPath: /opt/render/project/storage
+      sizeGB: 1

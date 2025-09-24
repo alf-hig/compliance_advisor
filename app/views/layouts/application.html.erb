@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html class="h-full">
+  <head>
+    <title><%= content_for(:title) || "Business Insurance Compliance Advisor" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="description" content="Discover which business insurance you're legally required to have. Get personalized recommendations based on your business type, location, and activities.">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
+    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="h-full bg-gray-50">
+    <!-- Navigation Header -->
+    <nav class="bg-white shadow-sm border-b border-gray-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+          <div class="flex items-center">
+            <%= link_to root_path, class: "flex-shrink-0 flex items-center" do %>
+              <span class="text-xl font-bold text-blue-600">Compliance Advisor</span>
+            <% end %>
+          </div>
+          <div class="flex items-center space-x-4">
+            <%= link_to "Start Assessment", assessment_start_new_path, 
+                class: "bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors" %>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <% if flash.any? %>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <% flash.each do |type, message| %>
+          <% css_class = case type.to_s
+                         when 'notice', 'info'
+                           'bg-blue-50 border-blue-200 text-blue-800'
+                         when 'error', 'alert'
+                           'bg-red-50 border-red-200 text-red-800'
+                         when 'success'
+                           'bg-green-50 border-green-200 text-green-800'
+                         else
+                           'bg-gray-50 border-gray-200 text-gray-800'
+                         end %>
+          <div class="<%= css_class %> border px-4 py-3 rounded-md mb-4">
+            <%= message %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <!-- Main Content -->
+    <main class="flex-1">
+      <%= yield %>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex justify-between items-center">
+          <div class="text-sm text-gray-600">
+            © 2024 Business Insurance Compliance Advisor
+          </div>
+          <div class="flex space-x-6 text-sm">
+            <%= link_to "About", about_path, class: "text-gray-600 hover:text-gray-900" %>
+            <%= link_to "Privacy", privacy_path, class: "text-gray-600 hover:text-gray-900" %>
+            <%= link_to "Terms", terms_path, class: "text-gray-600 hover:text-gray-900" %>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

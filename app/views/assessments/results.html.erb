@@ -1,0 +1,271 @@
+<% content_for :title, "Your Business Insurance Requirements - Assessment Results" %>
+
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <!-- Header -->
+    <div class="bg-white rounded-lg shadow-sm p-8 mb-8">
+      <div class="text-center">
+        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+          <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">
+          Assessment Complete!
+        </h1>
+        <p class="text-lg text-gray-600 mb-4">
+          Here are your personalized business insurance requirements
+        </p>
+        
+        <!-- Summary Stats -->
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mt-6">
+          <div class="bg-red-50 rounded-lg p-4">
+            <div class="text-2xl font-bold text-red-600"><%= @required_insurance.count %></div>
+            <div class="text-sm text-red-800">Legally Required</div>
+          </div>
+          <div class="bg-yellow-50 rounded-lg p-4">
+            <div class="text-2xl font-bold text-yellow-600"><%= @recommended_insurance.count %></div>
+            <div class="text-sm text-yellow-800">Recommended</div>
+          </div>
+          <div class="bg-blue-50 rounded-lg p-4">
+            <div class="text-2xl font-bold text-blue-600">$<%= number_with_delimiter(@total_estimated_cost) %></div>
+            <div class="text-sm text-blue-800">Est. Annual Cost</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Required Insurance -->
+    <% if @required_insurance.any? %>
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+          <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-red-100 text-red-600 mr-3">
+            ⚠️
+          </span>
+          Legally Required Insurance
+        </h2>
+        <p class="text-gray-600 mb-6">
+          These insurance types are mandatory for your business. You must have these to operate legally.
+        </p>
+        
+        <div class="space-y-4">
+          <% @required_insurance.each do |result| %>
+            <div class="bg-white rounded-lg shadow-sm border-l-4 border-red-500 p-6">
+              <div class="flex justify-between items-start mb-4">
+                <div>
+                  <h3 class="text-xl font-semibold text-gray-900 mb-2">
+                    <%= result.insurance_requirement.insurance_type.humanize %>
+                  </h3>
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium <%= result.priority_badge_class %>">
+                    <%= result.priority_label %>
+                  </span>
+                </div>
+                <div class="text-right">
+                  <div class="text-lg font-semibold text-gray-900">
+                    <%= result.formatted_cost %>
+                  </div>
+                </div>
+              </div>
+              
+              <p class="text-gray-700 mb-4">
+                <%= result.insurance_requirement.formatted_description %>
+              </p>
+              
+              <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                <h4 class="font-medium text-gray-900 mb-2">Why this is required for your business:</h4>
+                <p class="text-gray-700"><%= result.explanation %></p>
+              </div>
+              
+              <% if result.insurance_requirement.formatted_minimum_coverage.present? %>
+                <div class="mb-4">
+                  <h4 class="font-medium text-gray-900 mb-1">Minimum Coverage:</h4>
+                  <p class="text-gray-700"><%= result.insurance_requirement.formatted_minimum_coverage %></p>
+                </div>
+              <% end %>
+              
+              <div>
+                <h4 class="font-medium text-gray-900 mb-2">Next Steps:</h4>
+                <ul class="list-disc list-inside text-gray-700 space-y-1">
+                  <% result.insurance_requirement.next_steps.each do |step| %>
+                    <li><%= step %></li>
+                  <% end %>
+                </ul>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Recommended Insurance -->
+    <% if @recommended_insurance.any? %>
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+          <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-yellow-100 text-yellow-600 mr-3">
+            💡
+          </span>
+          Recommended Insurance
+        </h2>
+        <p class="text-gray-600 mb-6">
+          While not legally mandated, these insurance types are strongly recommended for your business type and activities.
+        </p>
+        
+        <div class="space-y-4">
+          <% @recommended_insurance.each do |result| %>
+            <div class="bg-white rounded-lg shadow-sm border-l-4 border-yellow-500 p-6">
+              <div class="flex justify-between items-start mb-4">
+                <div>
+                  <h3 class="text-xl font-semibold text-gray-900 mb-2">
+                    <%= result.insurance_requirement.insurance_type.humanize %>
+                  </h3>
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium <%= result.priority_badge_class %>">
+                    <%= result.priority_label %>
+                  </span>
+                </div>
+                <div class="text-right">
+                  <div class="text-lg font-semibold text-gray-900">
+                    <%= result.formatted_cost %>
+                  </div>
+                </div>
+              </div>
+              
+              <p class="text-gray-700 mb-4">
+                <%= result.insurance_requirement.formatted_description %>
+              </p>
+              
+              <div class="bg-gray-50 rounded-lg p-4">
+                <h4 class="font-medium text-gray-900 mb-2">Why this is recommended:</h4>
+                <p class="text-gray-700"><%= result.explanation %></p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Optional Insurance -->
+    <% if @optional_insurance.any? %>
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+          <span class="inline-flex items-center justify-center h-8 w-8 rounded-full bg-blue-100 text-blue-600 mr-3">
+            ℹ️
+          </span>
+          Worth Considering
+        </h2>
+        <p class="text-gray-600 mb-6">
+          These insurance types might be beneficial depending on your specific situation and risk tolerance.
+        </p>
+        
+        <div class="space-y-4">
+          <% @optional_insurance.each do |result| %>
+            <div class="bg-white rounded-lg shadow-sm border-l-4 border-blue-500 p-6">
+              <div class="flex justify-between items-start mb-4">
+                <div>
+                  <h3 class="text-xl font-semibold text-gray-900 mb-2">
+                    <%= result.insurance_requirement.insurance_type.humanize %>
+                  </h3>
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium <%= result.priority_badge_class %>">
+                    <%= result.priority_label %>
+                  </span>
+                </div>
+                <div class="text-right">
+                  <div class="text-lg font-semibold text-gray-900">
+                    <%= result.formatted_cost %>
+                  </div>
+                </div>
+              </div>
+              
+              <p class="text-gray-700">
+                <%= result.insurance_requirement.formatted_description %>
+              </p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Business Summary -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">Your Business Summary</h3>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Location</dt>
+          <dd class="text-sm text-gray-900"><%= @assessment.business_location[:state] %></dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Business Structure</dt>
+          <dd class="text-sm text-gray-900"><%= @assessment.business_structure&.humanize %></dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Industry</dt>
+          <dd class="text-sm text-gray-900"><%= @assessment.primary_industry&.humanize %></dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Employees</dt>
+          <dd class="text-sm text-gray-900">
+            <%= @assessment.has_employees? ? "#{@assessment.employee_count} employees" : "No employees" %>
+          </dd>
+        </div>
+      </div>
+    </div>
+
+    <!-- Important Disclaimer -->
+    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-yellow-800">Important Disclaimer</h3>
+          <p class="mt-2 text-sm text-yellow-700">
+            This assessment provides general guidance based on common requirements. 
+            Insurance laws and requirements can change, and your specific situation may have unique considerations. 
+            Always consult with a licensed insurance professional or attorney for definitive advice about your business insurance needs.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <%= link_to assessment_restart_path(@assessment.session_id), 
+                  class: "inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors" do %>
+        <svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+        </svg>
+        Start New Assessment
+      <% end %>
+      
+      <button onclick="window.print()" 
+              class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors">
+        <svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+        </svg>
+        Print Results
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Print-specific styles -->
+<style media="print">
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+  }
+  
+  .bg-gray-50 {
+    background: white !important;
+  }
+  
+  .shadow-sm {
+    box-shadow: none !important;
+    border: 1px solid #e5e7eb !important;
+  }
+</style>
